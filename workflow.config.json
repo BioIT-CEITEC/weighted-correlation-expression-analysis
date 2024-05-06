@@ -8,25 +8,12 @@
         "cpu": 30,
         "memory": 120
       },
-      "inputs": [],
-      "inputs_optional":[
-        "qc_reports/{sample}/RSEM/{sample}.*.*",
-        "qc_reports/{sample}/featureCount_exon/{sample}.*.*",
-        "qc_reports/{sample}/featureCount_gene/{sample}.*.*",
-        "qc_reports/{sample}/featureCount_transcript/{sample}.*.*",
-        "qc_reports/{sample}/featureCount_3pUTR/{sample}.*.*",
-        "qc_reports/{sample}/featureCount_5pUTR/{sample}.*.*",
-        "qc_reports/{sample}/kallisto/{sample}.*.*",
-        "qc_reports/{sample}/salmon_map/{sample}.*.*",
-        "qc_reports/{sample}/salmon_aln/{sample}.*.*"
+      "inputs": [
+        "DE_*/*"
       ],
       "outputs":[
         "logs",
         "results"
-      ],
-      "report_index": "final_report.html",
-      "reports":[
-         "final_report.html"
       ]
     },
     "general_params": [
@@ -34,55 +21,52 @@
       "sample_name"
     ],
     "requested_params": [
-      "reference"
+      "reference",
+      "featureCount",
+      "RSEM"
     ],
     "gui_params" : {
       "primary": {
         "trait_names": {
           "label": "Conditions names",
           "type": "string",
-          "default": "."
-        },
-        "trait_1": {
-          "label": "First condition",
-          "type": "bool",
-          "default": true
+          "default": ""
         },
         "trait_2": {
           "label": "Second condition",
+          "type": "bool",
+          "default": true
+        },
+        "trait_3": {
+          "label": "Third condition",
+          "type": "bool",
+          "default": false
+        },
+        "trait_4": {
+          "label": "Fourth condition",
           "type": "bool",
           "default": false
         }
       },
       "detailed": {
-        "keep_not_compared_samples_for_normalization": {
-          "label": "Keep not compared samples for normalization.",
-          "type": "bool",
-          "default": true,
-          "conditions": {
-            "relevance": {
-              "operand": "equal",
-              "negation": false,
-              "values": {
-                "normalize_data_per_comparison": false
-              }
-            }
-          }
+        "signed_analysis": {
+          "label": "Signed network construcition",
+          "type": "bool"
         },
-        "normalize_data_per_comparison": {
-          "label": "Normalize read counts to all samples OR per comparison.",
-          "type": "bool",
-          "default": false
+        "min_mod_size": {
+          "label": "Minimum block size",
+          "type": "int",
+          "default": 30
         },
-        "remove_genes_with_mean_read_count_threshold": {
-          "label": "Remove genes with mean raw read count bellow.",
+        "merg_thresh": {
+          "label": "Merging module threshold",
+          "type": "int",
+          "default": 0.25
+        },
+        "power_sel": {
+          "label": "Power for network construction",
           "type": "int",
           "default": 0
-        },
-        "biotypes": {
-          "label": "Biotypes",
-          "type": "string",
-          "default": "all"
         },
         "pvalue_for_viz": {
           "label": "pvalue for viz",
@@ -93,31 +77,6 @@
           "label": "Fold change threshold",
           "type": "string",
           "default": "2"
-        },
-        "named_in_viz": {
-          "label": "Named in viz",
-          "type": "int",
-          "default": 20
-        },
-        "filter_geneList": {
-          "label": "List of genes to filter",
-          "type": "string",
-          "default": "all"
-        },
-        "filter_keepGene": {
-          "label": "List of genes: true (keep), false (remove)",
-          "type": "bool",
-          "default": true
-        },
-        "filter_chrmList": {
-          "label": "List of chromosomes to filter",
-          "type": "string",
-          "default": "all"
-        },
-        "filter_keepChrm": {
-          "label": "List of chromosomes: true (keep), false (remove)",
-          "type": "bool",
-          "default": true
         }
       },
       "samples": {
@@ -126,7 +85,7 @@
           "type": "string",
           "default": ""
         },
-        "batch_group": {
+        "cond_2": {
           "label": "Trait 2",
           "type": "string",
           "default": "",
@@ -136,6 +95,34 @@
               "negation": false,
               "values": {
                 "trait_2": true
+              }
+            }
+          }
+        },
+        "cond_3": {
+          "label": "Trait 3",
+          "type": "string",
+          "default": "",
+          "conditions": {
+            "relevance": {
+              "operand": "equal",
+              "negation": false,
+              "values": {
+                "trait_3": true
+              }
+            }
+          }
+        },
+        "cond_4": {
+          "label": "Trait 4",
+          "type": "string",
+          "default": "",
+          "conditions": {
+            "relevance": {
+              "operand": "equal",
+              "negation": false,
+              "values": {
+                "trait_4": true
               }
             }
           }
