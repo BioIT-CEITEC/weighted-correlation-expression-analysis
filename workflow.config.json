@@ -1,118 +1,90 @@
 {
-    "workflow_description": {
-      "name":"WGCNA_analysis",
-      "version": 1.0,
-      "label":"WGCNA_analysis",
-      "type":"WGCNA_analysis",
-      "run_parameters": {
-        "cpu": 30,
-        "memory": 120
-      },
-      "inputs": [
-        "DE_*/*"
-      ],
-      "outputs":[
-        "logs",
-        "results"
-      ]
+  "workflow_description": {
+    "name":"WGCNA_analysis",
+    "version": 1.0,
+    "label":"WGCNA_analysis",
+    "type":"WGCNA_analysis",
+    "run_parameters": {
+      "cpu": 30,
+      "memory": 120
     },
-    "general_params": [
-      "entity_name",
-      "sample_name"
+    "inputs": [
+      "DE_*/*"
     ],
-    "requested_params": [
-      "reference",
-      "featureCount",
-      "RSEM"
-    ],
-    "gui_params" : {
-      "primary": {
-        "trait_names": {
-          "label": "Conditions names",
-          "type": "string",
-          "default": ""
-        },
-        "trait_2": {
-          "label": "Second condition",
-          "type": "bool",
-          "default": false
-        },
-        "trait_3": {
-          "label": "Third condition",
-          "type": "bool",
-          "default": false
-        },
-        "trait_4": {
-          "label": "Fourth condition",
-          "type": "bool",
-          "default": false
-        }
+    "outputs":[
+      "logs",
+      "results"
+    ]
+  },
+  "general_params": [
+    "entity_name",
+    "sample_name"
+  ],
+  "requested_params": [
+    "reference",
+    "featureCount",
+    "RSEM"
+  ],
+  "gui_params" : {
+    "primary": {
+      "trait_names": {
+        "label": "Conditions names",
+        "type": "string",
+        "default": ""
       },
-      "detailed": {
-        "signed_analysis": {
-          "label": "Signed network construcition",
-          "type": "bool"
-        },
-        "min_mod_size": {
-          "label": "Minimum block size",
-          "type": "int",
-          "default": 30
-        },
-        "merg_thresh": {
-          "label": "Merging module threshold",
-          "type": "string",
-          "default": "0.25"
-        },
-        "power_sel": {
-          "label": "Power for network construction",
-          "type": "int",
-          "default": 0
-        }
+      "trait_2": {
+        "label": "Second condition",
+        "type": "bool",
+        "default": false
       },
-      "samples": {
-        "condition": {
-          "label": "Trait 1",
-          "type": "string",
-          "default": ""
-        },
-        "cond_2": {
-          "label": "Trait 2",
-          "type": "string",
-          "default": "",
-          "conditions": {
-            "relevance": {
-              "operand": "equal",
-              "negation": false,
-              "values": {
-                "trait_2": true
-              }
-            }
-          }
-        },
-        "cond_3": {
-          "label": "Trait 3",
-          "type": "string",
-          "default": "",
-          "conditions": {
-            "relevance": {
-              "operand": "equal",
-              "negation": false,
-              "values": {
-                "trait_3": true
-              }
-            }
-          }
-        },
-        "cond_4": {
-          "label": "Trait 4",
-          "type": "string",
-          "default": "",
-          "conditions": {
-            "relevance": {
-              "operand": "equal",
-              "negation": false,
-              "values": {
-                "trait_4": true
+      "trait_3": {
+        "label": "Third condition",
+        "type": "bool",
+        "default": false
+      },
+      "trait_4": {
+        "label": "Fourth condition",
+        "type": "bool",
+        "default": false
+      }
+    },
+    "detailed": {
+      "signed_analysis": {
+        "label": "Signed network construcition",
+        "type": "bool"
+      },
+      "min_mod_size": {
+        "label": "Minimum block size",
+        "type": "int",
+        "default": 30
+      },
+      "merg_thresh": {
+        "label": "Merging module threshold",
+        "type": "string",
+        "default": "0.25"
+      },
+      "power_sel": {
+        "label": "Power for network construction",
+        "type": "int",
+        "default": 0
+      }
+    },
+    "samples": {
+      "condition": {
+        "label": "Trait 1",
+        "type": "string",
+        "default": ""
+      },
+      "cond_2": {
+        "label": "Trait 2",
+        "type": "string",
+        "default": "",
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "trait_2": true
             }
           }
         }
@@ -120,4 +92,3 @@
     }
   }
 }
-  
