@@ -71,16 +71,11 @@
     },
     "samples": {
       "condition": {
-        "label": "Condition",
-        "type": "string",
-        "default": ""
-      },
-      "cond_1": {
         "label": "Trait 1",
         "type": "string",
         "default": ""
       },
-      "cond_2": {
+      "replicate": {
         "label": "Trait 2",
         "type": "string",
         "default": "",
@@ -94,7 +89,7 @@
           }
         }
       },
-      "cond_3": {
+      "batch_group": {
         "label": "Trait 3",
         "type": "string",
         "default": "",
@@ -104,20 +99,6 @@
             "negation": false,
             "values": {
               "trait_3": true
-            }
-          }
-        }
-      },
-      "cond_4": {
-        "label": "Trait 4",
-        "type": "string",
-        "default": "",
-        "conditions": {
-          "relevance": {
-            "operand": "equal",
-            "negation": false,
-            "values": {
-              "trait_4": true
             }
           }
         }
