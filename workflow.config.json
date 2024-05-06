@@ -40,12 +40,12 @@
         "trait_3": {
           "label": "Third condition",
           "type": "bool",
-          "default": false
+          "default": true
         },
         "trait_4": {
           "label": "Fourth condition",
           "type": "bool",
-          "default": false
+          "default": true
         }
       },
       "detailed": {
@@ -67,16 +67,6 @@
           "label": "Power for network construction",
           "type": "int",
           "default": 0
-        },
-        "pvalue_for_viz": {
-          "label": "pvalue for viz",
-          "type": "string",
-          "default": "0.05"
-        },
-        "fold_change_threshold": {
-          "label": "Fold change threshold",
-          "type": "string",
-          "default": "2"
         }
       },
       "samples": {
@@ -123,11 +113,11 @@
               "negation": false,
               "values": {
                 "trait_4": true
-              }
             }
           }
         }
       }
     }
   }
+}
   
