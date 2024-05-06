@@ -35,17 +35,17 @@
         "trait_2": {
           "label": "Second condition",
           "type": "bool",
-          "default": true
+          "default": false
         },
         "trait_3": {
           "label": "Third condition",
           "type": "bool",
-          "default": true
+          "default": false
         },
         "trait_4": {
           "label": "Fourth condition",
           "type": "bool",
-          "default": true
+          "default": false
         }
       },
       "detailed": {
@@ -60,8 +60,8 @@
         },
         "merg_thresh": {
           "label": "Merging module threshold",
-          "type": "int",
-          "default": 0.25
+          "type": "string",
+          "default": "0.25"
         },
         "power_sel": {
           "label": "Power for network construction",
