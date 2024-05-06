@@ -1,11 +1,11 @@
 {
     "workflow_description": {
-      "name":"differential_expression",
-      "version": 2.3,
-      "label":"Differential expression",
-      "type":"differential_expression",
+      "name":"WGCNA_analysis",
+      "version": 1.0,
+      "label":"WGCNA_analysis",
+      "type":"WGCNA_analysis",
       "run_parameters": {
-        "cpu": 2,
+        "cpu": 30,
         "memory": 65
       },
       "inputs": [],
