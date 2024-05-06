@@ -6,7 +6,7 @@
       "type":"WGCNA_analysis",
       "run_parameters": {
         "cpu": 30,
-        "memory": 65
+        "memory": 120
       },
       "inputs": [],
       "inputs_optional":[
@@ -22,18 +22,7 @@
       ],
       "outputs":[
         "logs",
-        "final_report.html"
-      ],
-      "outputs_optional":[
-        "DE_RSEM",
-        "DE_featureCount_exon",
-        "DE_featureCount_gene",
-        "DE_featureCount_transcript",
-        "DE_featureCount_3pUTR",
-        "DE_featureCount_5pUTR",
-        "DE_salmon_map",
-        "DE_salmon_align",
-        "DE_kallisto"
+        "results"
       ],
       "report_index": "final_report.html",
       "reports":[
@@ -45,39 +34,24 @@
       "sample_name"
     ],
     "requested_params": [
-      "reference",
-      "featureCount",
-      "count_over",
-      "RSEM",
-      "salmon_map",
-      "salmon_align",
-      "kallisto"
+      "reference"
     ],
     "gui_params" : {
       "primary": {
-        "conditions_to_compare": {
-          "label": "Conditions to compare",
+        "trait_names": {
+          "label": "Conditions names",
           "type": "string",
-          "default": "all"
+          "default": "."
         },
-        "paired_replicates": {
-          "label": "Replicates are paired by ID.",
+        "trait_1": {
+          "label": "First condition",
+          "type": "bool",
+          "default": true
+        },
+        "trait_2": {
+          "label": "Second condition",
           "type": "bool",
           "default": false
-        },
-        "use_custom_batch_effect_grouping": {
-          "label": "Use custom batch effect groups in batch.",
-          "type": "bool",
-          "default": false,
-          "conditions": {
-            "relevance": {
-              "operand": "equal",
-              "negation": false,
-              "values": {
-                "paired_replicates": true
-              }
-            }
-          }
         }
       },
       "detailed": {
@@ -148,17 +122,12 @@
       },
       "samples": {
         "condition": {
-          "label": "Condition",
-          "type": "string",
-          "default": ""
-        },
-        "replicate": {
-          "label": "Replicate ID",
+          "label": "Trait 1",
           "type": "string",
           "default": ""
         },
         "batch_group": {
-          "label": "Batch",
+          "label": "Trait 2",
           "type": "string",
           "default": "",
           "conditions": {
@@ -166,7 +135,7 @@
               "operand": "equal",
               "negation": false,
               "values": {
-                "use_custom_batch_effect_grouping": true
+                "trait_2": true
               }
             }
           }
