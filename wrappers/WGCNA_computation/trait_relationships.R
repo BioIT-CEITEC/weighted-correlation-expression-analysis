@@ -34,11 +34,12 @@ trait_relationship <- function(output_dir, counts_dt, traits_table, eigenvalues,
     dir.create(path = temp_dir, recursive = TRUE, showWarnings = FALSE)
     setwd(temp_dir)
     trait_data <- as.data.frame(traits_table[[trait]])
+    names(trait_data) <- trait
     GS1 <- as.numeric(cor(counts_dt, trait_data, use = "p"))
     gene_significance <- abs(GS1)
 
     pdf(file = paste0(trait, "-gene_significance.pdf"), width = 16, height = 14)
-    sizeGrWindow(16, 14)
+    sizeGrWindow(24, 21)
     par(mfrow = c(1, 1))
     plotModuleSignificance(gene_significance, moduleColors,
                            ylab = paste("Gene Significance for", trait))
@@ -52,7 +53,7 @@ trait_relationship <- function(output_dir, counts_dt, traits_table, eigenvalues,
     names(GSPvalue) <- paste0("p.GS.", trait, sep = "")
     trait_sig <- cbind(geneTraitSignificance, GSPvalue)
     trait_sig <- tibble::rownames_to_column(trait_sig, var = "Geneid")
-    gen_symb_merg <- merge.data.table(trait_sig, gtf,
+    gen_symb_merg <- merge.data.table(trait_sig, merged_table,
                                       by.x = "Geneid",
                                       by.y = "Geneid",
                                       all.x = TRUE)
@@ -114,11 +115,31 @@ trait_relationship <- function(output_dir, counts_dt, traits_table, eigenvalues,
                          main = paste("Module membership vs. gene significance\n"),
                          cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = mod)
       dev.off()
-
+      
       modGenes <- (moduleColors == mod)
-      fileName <- paste(trait, "-IDs-", mod, ".tsv", sep = "")
+      fileName <- paste0(trait, "-IDs-", mod, ".tsv")
       fwrite(as.data.frame(merged_table[modGenes]), file = fileName)
 
+      
+      abs_dt <- data.table(abs(geneModuleMembership[moduleGenes, column]),
+                           abs(geneTraitSignificance[moduleGenes, 1]),
+                           merged_table[modGenes])
+      
+      setnames(abs_dt, c("V1","V2"), c("MM","GS"))
+      setcolorder(abs_dt, c("Geneid", "gene_name"))
+      fn1 <- paste0("abs_gene_significance_",trait,"_",mod,"_module.tsv")
+      fwrite(abs_dt, file = fn1)
+      
+      
+      
+      dir_dt <- data.table(geneModuleMembership[moduleGenes, column],
+                           abs(geneTraitSignificance[moduleGenes, 1]),
+                           merged_table[modGenes])
+      setnames(dir_dt, c("V1","V2"), c("MM","GS"))
+      setcolorder(dir_dt, c("Geneid", "gene_name"))
+      fn2 <- paste0("gene_significance_",trait,"_",mod,"_module.tsv")
+      fwrite(dir_dt, file = fn2)
+      
       gene_name <- colnames(counts_dt)
       inModule <- is.finite(match(moduleColors, mod))
       modProbes <- gene_name[inModule]

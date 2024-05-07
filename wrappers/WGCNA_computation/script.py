@@ -11,15 +11,18 @@ f = open(log_filename, 'a+')
 f.write("\n##\n## RULE: WGCNA_computation \n##\n")
 f.close()
 
+snakemake.params.sample_tab.to_csv(snakemake.params.experiment_design, index=False,sep="\t")
+
+
 command = "Rscript " + os.path.abspath(os.path.dirname(__file__)) + "/wgcna_computation.R " +\
-            snakemake.input.experiment_design + " " +\
+            snakemake.params.experiment_design + " " +\
             snakemake.input.counts + " " +\
-            snakemake.input.traits + " " + \
             snakemake.input.gtf + " " +\
             str(snakemake.params.signed) + " " +\
             str(snakemake.params.min_module_size) + " " +\
             str(snakemake.params.merge_threshold) + " " +\
             str(snakemake.params.power_selection) + " " +\
+            str(snakemake.params.trait_names) + \
             " >> " + log_filename + " 2>&1"
 
 f = open(log_filename, "a+")

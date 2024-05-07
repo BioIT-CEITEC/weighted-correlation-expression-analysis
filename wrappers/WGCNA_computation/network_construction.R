@@ -130,9 +130,9 @@ network_construction <- function(output_directory,counts_table,traits_table,minM
   moduleTraitCor <- cor(MEs, traits_table, use = "p")
   moduleTraitPvalue <- corPvalueStudent(moduleTraitCor, nrow(counts_table))
   pdf("heatmap_traits.pdf",
-      width = 10,
-      height = 6)
-  sizeGrWindow(10, 6)
+      width = 20,
+      height = 12)
+  sizeGrWindow(20, 12)
   textMatrix <- paste(signif(moduleTraitCor, 2), "\n(",
                       signif(moduleTraitPvalue, 1), ")", sep = "")
   dim(textMatrix) <- dim(moduleTraitCor)

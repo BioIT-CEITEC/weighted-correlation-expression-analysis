@@ -23,7 +23,10 @@
   "requested_params": [
     "reference",
     "featureCount",
-    "RSEM"
+    "RSEM",
+    "salmon_align",
+    "salmon_map",
+    "kallisto"
   ],
   "gui_params" : {
     "primary": {

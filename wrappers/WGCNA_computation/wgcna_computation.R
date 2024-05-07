@@ -8,13 +8,14 @@ library(tibble)
 run_all <- function(args) {
   experiment_design_file <- args[1]
   counts_file <- args[2]
-  traits_table <- args[3]
   relative_output_dir <- dirname(experiment_design_file)
-  gtf_filename <- args[4]
-  signed <- as.logical(toupper(args[5]))
-  min_module_size <- as.numeric(args[6])
-  merging_threshold <- as.numeric(args[7])
-  power_threshold <- as.numeric(args[8])
+  gtf_filename <- args[3]
+  signed <- as.logical(toupper(args[4]))
+  min_module_size <- as.numeric(args[5])
+  merging_threshold <- as.numeric(args[6])
+  power_threshold <- as.numeric(args[7])
+  new_colnames <- args[8]
+
 
   allowWGCNAThreads(nThreads = 30)
   options(stringsAsFactors = FALSE)
@@ -27,8 +28,13 @@ run_all <- function(args) {
     type <- "unsigned"
   }
 
-  normalized_counts <- t(fread(counts_file) %>% column_to_rownames("rn"))
-  traits_dt <- fread(traits_table) %>% column_to_rownames("rn")
+
+  res_list <- load_counts_and_traits(counts = counts_file,
+                                     traits = experiment_design_file,
+                                     new_colnames = new_colnames)
+
+  normalized_counts <- t(res_list[[1]])
+  traits_dt <- res_list[[2]]
 
   final_counts <- first_dendro_and_colors(counts_table = normalized_counts,
                                           traits_table = traits_dt,
@@ -73,6 +79,7 @@ run_all <- function(args) {
 }
 
 script.dir <- dirname(gsub("--file=","",commandArgs()[grep("--file",commandArgs())]))
+source(paste0(script.dir, "/load_counts_traits.R"))
 source(paste0(script.dir, "/first_dendro_and_colors.R"))
 source(paste0(script.dir, "/network_construction.R"))
 source(paste0(script.dir, "/trait_relationships.R"))
