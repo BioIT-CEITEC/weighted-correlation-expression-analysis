@@ -54,7 +54,8 @@
     "detailed": {
       "signed_analysis": {
         "label": "Signed network construcition",
-        "type": "bool"
+        "type": "bool",
+        "default": true
       },
       "min_mod_size": {
         "label": "Minimum block size",

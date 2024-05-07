@@ -3,7 +3,7 @@ load_counts_and_traits <- function(counts_file, experiment_design_file, trait_na
   counts_dt <- readRDS(counts_file) %>%
     dcast(., Ensembl_Id + Feature_name ~ sample_name, value.var = "vstcounts", fill = 0) %>%
     .[, -2] %>%
-    tibble::column_to_rownames(counts_dt, "Ensembl_Id")
+    tibble::column_to_rownames(., "Ensembl_Id")
 
 
   traits_dt <- fread(experiment_design_file)
