@@ -1,7 +1,7 @@
-network_construction <- function(output_directory,counts_table,traits_table,minModuleSize,power_threshold = 0, merg_thresh, signed, merged_table) {
+network_construction <- function(output_dir, filtered_counts, traits_dt, min_module_size, merging_threshold, signed_type, merged_table, power_threshold = 0) {
 
   orig_dir <- getwd()
-  setwd(output_directory)
+  setwd(output_dir)
 
   if (power_threshold != 0) {
     power <- power_threshold
@@ -9,7 +9,7 @@ network_construction <- function(output_directory,counts_table,traits_table,minM
 
   print("Selecting power threshold for the scale free topology model")
   powers <- c(c(1:10), seq(from = 12, to = 30, by = 2))
-  sft <- pickSoftThreshold(data = counts_table,
+  sft <- pickSoftThreshold(data = filtered_counts,
                            powerVector = powers,
                            verbose = 3)
   power <- sft$powerEstimate
@@ -42,12 +42,15 @@ network_construction <- function(output_directory,counts_table,traits_table,minM
   temp_cor <- cor
   cor <- WGCNA::cor
 
-  adjacency <- adjacency(datExpr = counts_table, power = power, type = signed)
+  adjacency <- adjacency(datExpr = filtered_counts, power = power, type = signed_type)
   TOM <- TOMsimilarity(adjacency)
   print("Finished TOM creation...")
   dissTOM <- 1 - TOM
   geneTree <- hclust(as.dist(dissTOM), method = "average")
-  pdf(file = "TOM_dendrogram.pdf", width = 12, height = 9)
+  pdf(file = "TOM_dendrogram.pdf",
+      width = 12,
+      height = 9)
+
   sizeGrWindow(12, 9)
   plot(x = geneTree,
        xlab = "",
@@ -63,12 +66,13 @@ network_construction <- function(output_directory,counts_table,traits_table,minM
                                distM = dissTOM,
                                deepSplit = 2,
                                pamRespectsDendro = FALSE,
-                               minClusterSize = minModuleSize)
+                               minClusterSize = min_module_size)
 
   dynamicColors <- labels2colors(dynamicMods)
   pdf(file = "dendrogram_dynamic_tree_cut.pdf",
       width = 8,
       height = 6)
+
   sizeGrWindow(8, 6)
   plotDendroAndColors(dendro = geneTree,
                       colors = dynamicColors,
@@ -80,31 +84,31 @@ network_construction <- function(output_directory,counts_table,traits_table,minM
                       main = "Gene dendrogram and module colors")
   dev.off()
 
-  MEList <- moduleEigengenes(expr = counts_table, colors = dynamicColors)
+  MEList <- moduleEigengenes(expr = filtered_counts, colors = dynamicColors)
   MEs <- MEList$eigengenes
   MEDiss <- 1 - cor(MEs)
   METree <- hclust(as.dist(MEDiss), method = "average")
   pdf(file = "cluster_modules_eigengenes.pdf",
       width = 7,
       height = 6)
+
   sizeGrWindow(7, 6)
   plot(x = METree, main = "Clustering of module eigengenes",
        xlab = "", sub = "")
-  abline(h = merg_thresh, col = "red")
+  abline(h = merging_threshold, col = "red")
   dev.off()
 
   print("Started merging modules...")
 
-  merge <- mergeCloseModules(exprData = counts_table,
+  merge <- mergeCloseModules(exprData = filtered_counts,
                              colors = dynamicColors,
-                             cutHeight = merg_thresh,
+                             cutHeight = merging_threshold,
                              verbose = 3)
 
   mergedColors <- merge$colors
   num_colors <- as.data.table(table(mergedColors))
   fwrite(num_colors, "num_genes_per_module.tsv")
 
-  mergedMEs <- merge$newMEs
   module_genes <- cbind(merged_table,mergedColors)
   fwrite(module_genes, "genes_name_per_module.tsv")
 
@@ -121,14 +125,13 @@ network_construction <- function(output_directory,counts_table,traits_table,minM
                       addGuide = TRUE, guideHang = 0.05)
   dev.off()
 
-  moduleColors <- mergedColors
   colorOrder <- c("grey", standardColors(50))
-  moduleLabels <- match(moduleColors, colorOrder) - 1
-  ME <- mergedMEs
-  MEs0 <- moduleEigengenes(counts_table, moduleColors)$eigengenes
+  moduleLabels <- match(mergedColors, colorOrder) - 1
+  ME <- merge$newMEs
+  MEs0 <- moduleEigengenes(filtered_counts, mergedColors)$eigengenes
   MEs <- orderMEs(MEs0)
-  moduleTraitCor <- cor(MEs, traits_table, use = "p")
-  moduleTraitPvalue <- corPvalueStudent(moduleTraitCor, nrow(counts_table))
+  moduleTraitCor <- cor(MEs, traits_dt, use = "p")
+  moduleTraitPvalue <- corPvalueStudent(moduleTraitCor, nrow(filtered_counts))
   pdf("heatmap_traits.pdf",
       width = 20,
       height = 12)
@@ -138,7 +141,7 @@ network_construction <- function(output_directory,counts_table,traits_table,minM
   dim(textMatrix) <- dim(moduleTraitCor)
   par(mar = c(6, 8.5, 3, 3))
   labeledHeatmap(Matrix = moduleTraitCor,
-                 xLabels = names(traits_table),
+                 xLabels = names(traits_dt),
                  yLabels = names(MEs),
                  ySymbols = names(MEs),
                  colorLabels = FALSE,
@@ -151,17 +154,22 @@ network_construction <- function(output_directory,counts_table,traits_table,minM
   dev.off()
 
   print("Finished plotting...")
+
+  #This is a connectivity plot, but isn't suitable to create for human samples
+  # with at least 50000 genes as it will crash due to resources limitations
+  # then that is why is commented out, but it can be useful for smaller datasets
+
   #plotTOM <- dissTOM^7
   #diag(plotTOM) <- NA
   #pdf(file = "network_heatmap.pdf", width = 9, height = 9)
   #sizeGrWindow(9, 9)
   #TOMplot(dissim = plotTOM,
   #        dendro = geneTree,
-  #        Colors = moduleColors,
+  #        Colors = mergedColors,
   #        main = "Network heatmap plot, all genes")
   #dev.off()
 
   setwd(orig_dir)
 
-  return(list(MEs, moduleTraitCor, moduleTraitPvalue, moduleColors, TOM, dissTOM))
+  return(list(MEs, moduleTraitCor, moduleTraitPvalue, mergedColors, TOM, dissTOM))
 }

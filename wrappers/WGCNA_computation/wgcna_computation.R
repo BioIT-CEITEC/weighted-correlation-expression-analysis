@@ -8,13 +8,12 @@ library(tibble)
 run_all <- function(args) {
   experiment_design_file <- args[1]
   counts_file <- args[2]
-  relative_output_dir <- dirname(experiment_design_file)
   gtf_filename <- args[3]
   signed <- as.logical(toupper(args[4]))
   min_module_size <- as.numeric(args[5])
   merging_threshold <- as.numeric(args[6])
   power_threshold <- as.numeric(args[7])
-  new_colnames <- args[8]
+  trait_names <- args[8]
 
 
   allowWGCNAThreads(nThreads = 30)
@@ -23,25 +22,24 @@ run_all <- function(args) {
   output_dir <- paste0(getwd(), "/results")
 
   if (signed) {
-    type <- "signed"
+    signed_type <- "signed"
   } else {
-    type <- "unsigned"
+    signed_type <- "unsigned"
   }
 
-
-  res_list <- load_counts_and_traits(counts = counts_file,
-                                     traits = experiment_design_file,
-                                     new_colnames = new_colnames)
+  res_list <- load_counts_and_traits(counts_file,
+                                     experiment_design_file,
+                                     trait_names)
 
   normalized_counts <- t(res_list[[1]])
   traits_dt <- res_list[[2]]
 
-  final_counts <- first_dendro_and_colors(counts_table = normalized_counts,
-                                          traits_table = traits_dt,
-                                          output_directory = output_dir,
-                                          signed = signed)
+  filtered_counts <- first_dendro_and_colors(normalized_counts,
+                                             traits_dt,
+                                             output_dir,
+                                             signed)
 
-  allIDs <- as.data.table(colnames(final_counts))
+  allIDs <- as.data.table(colnames(filtered_counts))
   feat_type <- "gene"
   annotate_by <- c("gene_id", "gene_name")
   gtf_gene_tab <- as.data.table(rtracklayer::import(gtf_filename, feature.type = feat_type))[,annotate_by,with=F]
@@ -51,14 +49,14 @@ run_all <- function(args) {
 
   setnames(merged_table, "V1", "Geneid")
 
-  res_list <- network_construction(output_directory = output_dir,
-                                   counts_table = final_counts,
-                                   traits_table = traits_dt,
-                                   minModuleSize = min_module_size,
-                                   merg_thresh = merging_threshold,
-                                   signed = type,
-                                   merged_table = merged_table,
-                                   power_threshold = power_threshold)
+  res_list <- network_construction(output_dir,
+                                   filtered_counts,
+                                   traits_dt,
+                                   min_module_size,
+                                   merging_threshold,
+                                   signed_type,
+                                   merged_table,
+                                   power_threshold)
   MEs <- res_list[[1]]
   moduleTraitCor <- res_list[[2]]
   moduleTraitPvalue <- res_list[[3]]
@@ -66,14 +64,13 @@ run_all <- function(args) {
   TOM <- res_list[[5]]
   dissTOM <- res_list[[6]]
 
-  trait_relationship(output_dir = output_dir,
-                     counts_dt = final_counts,
-                     traits_table = traits_dt,
-                     eigenvalues = MEs,
-                     colors =  moduleColors,
-                     merged_table = merged_table,
-                     gtf = gtf_gene_tab,
-                     tom = TOM)
+  trait_relationship(output_dir,
+                     filtered_counts,
+                     traits_dt,
+                     MEs,
+                     moduleColors,
+                     merged_table,
+                     TOM)
 
 
 }
